@@ -16,7 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+var vocabularyWords = null;
+
 var app = {
+
     // Application Constructor
     initialize: function() {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
@@ -34,28 +37,75 @@ var app = {
     receivedEvent: function(id) {
         var arr = [];
 
-        var test = document.getElementById('test');
+        // var test = document.getElementById('test');
 
-        test.addEventListener('click', function(){
+        // test.addEventListener('click', function(){
+        //     var request = new XMLHttpRequest();
+        //     request.open("GET", "vocabulary.json", false);
+        //     request.send(null)
+        //     var vocabularyWords = JSON.parse(request.responseText);
+
+        //     console.log(vocabularyWords);
+
+        //     while(true){
+        //         var rnd = Math.floor((Math.random() * vocabularyWords[0].words.length) + 1);
+        //         if(arr.indexOf(rnd) > -1) continue;
+        //         else{
+        //             arr[arr.length] = rnd;
+        //             alert(vocabularyWords[0].words[rnd].TYPE + " - " + vocabularyWords[0].words[rnd].ENGLISH);
+        //             alert(vocabularyWords[0].words[rnd].TYPE + " - " + vocabularyWords[0].words[rnd].TURKISH);
+        //             break;
+        //         }
+        //     }        
+        // });
+
+        f7.$$('#topics').on('show', function () {
+            console.log('Topic page show!');
             var request = new XMLHttpRequest();
-            request.open("GET", "vocabulary.json", false);
+            request.open("GET", "../www/vocabulary.json", false);
             request.send(null)
-            var vocabularyWords = JSON.parse(request.responseText);
+            vocabularyWords = JSON.parse(request.responseText);
+            var list = document.getElementById('list');
 
-            console.log(vocabularyWords);
+            var htmlText = "";
 
-            while(true){
-                var rnd = Math.floor((Math.random() * vocabularyWords[0].words.length) + 1);
-                if(arr.indexOf(rnd) > -1) continue;
-                else{
-                    arr[arr.length] = rnd;
-                    alert(vocabularyWords[0].words[rnd].TYPE + " - " + vocabularyWords[0].words[rnd].ENGLISH);
-                    alert(vocabularyWords[0].words[rnd].TYPE + " - " + vocabularyWords[0].words[rnd].TURKISH);
-                    break;
-                }
-            }        
+            for ( var key in vocabularyWords ) {
+                htmlText += '<li>' +
+                                '<a href="#" data-topic-key="' + key + '" onclick="app.openWordList(this)" class="item-link item-content">' +
+                                    '<div class="item-media"><i class="icon ion-clipboard"></i></div>' +
+                                    '<div class="item-inner">' +
+                                        '<div class="item-title">' + vocabularyWords[key].name + '</div>' +
+                                    '</div>' +
+                                '</a>' +
+                            '</li>';
+            }
+            topicList.innerHTML = htmlText;
         });
         
+    },
+
+    openWordList: function (topic) {
+        f7.showTab('#words');
+        console.log('Topic page show!');
+        var topicKey = parseInt(topic.getAttribute("data-topic-key"));
+        var words = vocabularyWords[topicKey].words;
+        var htmlText = "";
+        document.getElementById('topicName').innerHTML = vocabularyWords[topicKey].name;
+        for ( var key in words ) {
+            htmlText += '<li>' +
+                            '<div class="item-content">' +
+                                '<div class="item-media"><img src="img/logo.png" width="44"></div>' +
+                                '<div class="item-inner">' +
+                                    '<div class="item-title-row">' +
+                                        '<div class="item-title">' + words[key].ENGLISH + '</div>' +
+                                    '</div>' +
+                                    '<div class="item-subtitle">' + words[key].TURKISH + '</div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</li>';
+        }
+
+        wordList.innerHTML = htmlText;
     }
 };
 
